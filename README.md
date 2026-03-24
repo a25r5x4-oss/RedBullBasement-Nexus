@@ -1,216 +1,222 @@
 # RedBullBasement-Nexus
-<!DOCTYPE html> 
-<html lang="ja"> 
-<head> 
-    <meta charset="UTF-8"> 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>My Future Quest | Red Bull × Nexus</title> 
-    <style> 
-        :root { 
-            --rb-navy: #000b49; 
-            --rb-red: #ed1c24; 
-            --rb-yellow: #ffcc00; 
-            --rb-silver: #f1f1f1; 
-        } 
-        body { 
-            font-family: 'Helvetica Neue', Arial, sans-serif; 
-            background-color: var(--rb-silver); 
-            color: var(--rb-navy); 
-            margin: 0; 
-            padding: 0; 
-            line-height: 1.6; 
-        } 
-        header { 
-            background-color: var(--rb-navy); 
-            color: white; 
-            padding: 20px; 
-            text-align: center; 
-            border-bottom: 5px solid var(--rb-red); 
-        } 
-        .container { 
-            padding: 20px; 
-            max-width: 600px; 
-            margin: auto; 
-        } 
-        section { 
-            background: white; 
-            border-radius: 15px; 
-            padding: 20px; 
-            margin-bottom: 25px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-        } 
-        h2 { 
-            color: var(--rb-red); 
-            border-left: 5px solid var(--rb-yellow); 
-            padding-left: 10px; 
-            font-size: 1.2rem; 
-} 
-label { 
-display: block; 
-margin: 15px 0 5px; 
-font-weight: bold; 
-} 
-input[type="text"], textarea, select { 
-width: 100%; 
-padding: 10px; 
-border: 1px solid #ccc; 
-border-radius: 5px; 
-box-sizing: border-box; 
-} 
-.status-grid { 
-display: grid; 
-grid-template-columns: 1fr 1fr; 
-gap: 10px; 
-} 
-.status-item input { 
-width: 100%; 
-} 
-.prompt-box { 
-background: #eee; 
-padding: 15px; 
-border-radius: 10px; 
-font-family: monospace; 
-font-size: 0.9rem; 
-margin-top: 10px; 
-border: 1px dashed var(--rb-navy); 
-} 
-button { 
-background-color: var(--rb-red); 
-color: white; 
-border: none; 
-padding: 12px 20px; 
-border-radius: 25px; 
-font-weight: bold; 
-cursor: pointer; 
-width: 100%; 
-margin-top: 10px; 
-transition: 0.3s; 
-} 
-button:hover { background-color: var(--rb-navy); } 
-.energy-counter { 
-background: var(--rb-yellow); 
-padding: 10px; 
-border-radius: 10px; 
-font-weight: bold; 
-text-align: center; 
-position: sticky; 
-top: 10px; 
-z-index: 100; 
-} 
-.quest-item { 
-display: flex; 
-align-items: center; 
-margin-bottom: 10px; 
-} 
-.quest-item input { margin-right: 10px; } 
-</style> 
-</head> 
-<body> 
-<header> 
-<h1>My Future Quest</h1> 
-<p>Red Bull × Nexus Workshop</p> 
-</header> 
-<div class="container"> 
-<!-- ワーク① Step1 --> 
-<section> 
-<h2>Step 1: Character Creation</h2> 
-<p>自分のステータスを可視化しよう！[1]</p> 
-<label>つい没頭してしまうことは？</label> 
-<input type="text" id="habit" placeholder="例：SNS 分析、パズル..."> 
-<label>ステータス診断 (10点満点)</label> 
-<div class="status-grid"> 
-<div class="status-item">行動力: <input type="range" min="1" max="10" 
-value="5" id="s1"></div> 
-<div class="status-item">コミュ力: <input type="range" min="1" 
-max="10" value="5" id="s2"></div> 
-<div class="status-item">創造性: <input type="range" min="1" max="10" 
-value="5" id="s3"></div> 
-<div class="status-item">分析力: <input type="range" min="1" max="10" 
-value="5" id="s4"></div> 
-<div class="status-item">挑戦心: <input type="range" min="1" max="10" 
-value="5" id="s5"></div> 
-<div class="status-item">継続力: <input type="range" min="1" max="10" 
-value="5" id="s6"></div> 
-</div> 
-</section> 
-<!-- ワーク① Step2 & 3 --> 
-<section> 
-<h2>Step 2 & 3: AI Alchemy</h2> 
-<label>解決したい課題を選択 [1]</label> 
-<select id="issue_type"> 
-<option>日常生活の不便</option> 
-<option>社会課題（環境・格差など）</option> 
-<option>社会の「もったいない」</option> 
-<option>個人の悩みや不安</option> 
-</select> 
-<label>具体的な課題内容</label> 
-<input type="text" id="issue_detail" placeholder="例：新入生が友達を作りづ
-らい..."> 
-<label>あなたの強み（3つ）</label> 
-<input type="text" id="strength" placeholder="例：行動力、継続力、創造性"> 
-<button onclick="generatePrompt()">AI プロンプトを生成</button> 
-<div id="prompt_result" class="prompt-box" style="display:none;"> 
-あなたは世界中のスタートアップに精通した起業家です。私の強み「<span 
-id="p_str"></span>」と社会課題「<span id="p_issue"></span>」を組み合わせて、ビジネス
-アイディアを3つ提案してください。条件：1.タイトル 2.概要 3.マネタイズ 4.独自性 [2] 
-</div> 
-<button id="copy_btn" style="display:none;" onclick="copyPrompt()">プロン
-プトをコピー</button> 
-</section> 
-<!-- ワーク① Step 4 --> 
-<section> 
-<h2>Step 4: Evolution</h2> 
-<p>AI の案を自分の手で具体化！（AI使用禁止）[2]</p> 
-<label>ターゲット（誰が使う？）</label> 
-<input type="text"> 
-<label>解決する問題（具体的に何をする？）</label> 
-<textarea rows="3"></textarea> 
-</section> 
-<!-- ワーク② --> 
-<div class="energy-counter">残りエネルギー: <span id="energy_left">100</span> 
-pt</div> 
-<section> 
-<h2>Workshop 2: University Quest</h2> 
-<p>100pt 以内で挑戦を選ぼう！[3]</p> 
-<div class="quest-item"><input type="checkbox" class="quest" data-pt="80" 
-onchange="calcEnergy()"> ビジコン出場 (80pt)</div> 
-<div class="quest-item"><input type="checkbox" class="quest" data-pt="70" 
-onchange="calcEnergy()"> 海外挑戦 (70pt)</div> 
-<div class="quest-item"><input type="checkbox" class="quest" data-pt="30" 
-onchange="calcEnergy()"> サークル立ち上げ (30pt)</div> 
-<div class="quest-item"><input type="checkbox" class="quest" data-pt="40" 
-onchange="calcEnergy()"> インターンシップ (40pt)</div> 
-<label>1 年目の具体的アクション</label> 
-<input type="text" placeholder="例：まずは〇〇サークルに見学に行く"> 
-</section> 
-<button onclick="alert('冒険の準備完了！この画面を保存しておこう！')">クエストを
-確定する</button> 
-</div> 
-<script> 
-function generatePrompt() { 
-document.getElementById('p_str').innerText = 
-document.getElementById('strength').value; 
-document.getElementById('p_issue').innerText = 
-document.getElementById('issue_detail').value; 
-document.getElementById('prompt_result').style.display = 'block'; 
-document.getElementById('copy_btn').style.display = 'block'; 
-} 
-function copyPrompt() { 
-const text = document.getElementById('prompt_result').innerText; 
-navigator.clipboard.writeText(text); 
-alert('プロンプトをコピーしました！AIツールに貼り付けてください。'); 
-} 
-function calcEnergy() { 
-let total = 0; 
-document.querySelectorAll('.quest:checked').forEach(el => { 
-total += parseInt(el.getAttribute('data-pt')); 
-}); 
-const left = 100 - total; 
-document.getElementById('energy_left').innerText = left; 
-if (left < 0) { 
-alert('エネルギーが不足しています！クエストを調整してください。'); 
-} 
-} 
-</script> 
-</body> 
-</html> 
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Future Quest | Red Bull × Nexus</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root {
+    --rb-navy:#000b49;
+    --rb-red:#ed1c24;
+    --rb-yellow:#ffcc00;
+    --rb-silver:#f1f1f1;
+}
+
+body{
+    font-family:Arial;
+    background: linear-gradient(135deg,#000b49,#1a1a1a);
+    color:white;
+    margin:0;
+}
+
+header{
+    text-align:center;
+    padding:20px;
+}
+
+.logo-area img{
+    height:60px;
+    margin:10px;
+}
+
+.container{
+    max-width:700px;
+    margin:auto;
+    padding:20px;
+}
+
+section{
+    background:white;
+    color:black;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:20px;
+}
+
+h2{
+    color:var(--rb-red);
+}
+
+button{
+    background:var(--rb-red);
+    color:white;
+    padding:12px;
+    border:none;
+    border-radius:20px;
+    width:100%;
+    margin-top:10px;
+}
+
+.energy-counter{
+    background:var(--rb-yellow);
+    color:black;
+    padding:10px;
+    text-align:center;
+    font-weight:bold;
+}
+
+canvas{
+    margin-top:20px;
+}
+
+/* エフェクト */
+.glow{
+    box-shadow:0 0 15px var(--rb-red);
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>My Future Quest</h1>
+
+    <!-- ロゴ追加 -->
+    <div class="logo-area">
+        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/f/f5/Red_Bull_Basement_logo.png/320px-Red_Bull_Basement_logo.png">
+        <img src="YOUR_NEXUS_LOGO_URL">
+    </div>
+
+    <p>Energy Your Future</p>
+</header>
+
+<div class="container">
+
+<!-- Step1 -->
+<section>
+<h2>Step1: Character Creation</h2>
+
+<label>没頭すること</label>
+<input id="habit">
+
+<label>ステータス</label>
+
+行動力<input type="range" id="s1" min="1" max="10" value="5" oninput="updateChart()">
+コミュ力<input type="range" id="s2" min="1" max="10" value="5" oninput="updateChart()">
+創造性<input type="range" id="s3" min="1" max="10" value="5" oninput="updateChart()">
+分析力<input type="range" id="s4" min="1" max="10" value="5" oninput="updateChart()">
+挑戦心<input type="range" id="s5" min="1" max="10" value="5" oninput="updateChart()">
+継続力<input type="range" id="s6" min="1" max="10" value="5" oninput="updateChart()">
+
+<canvas id="radarChart"></canvas>
+
+</section>
+
+<!-- Step2 -->
+<section>
+<h2>Step2: AI Alchemy</h2>
+
+<label>課題</label>
+<input id="issue">
+
+<label>強み</label>
+<input id="strength">
+
+<button onclick="generatePrompt()">生成</button>
+
+<div id="promptBox"></div>
+
+<button onclick="copyPrompt()">コピー</button>
+
+<!-- ChatGPTリンク -->
+<a href="https://chat.openai.com" target="_blank">
+<button>ChatGPTを開く</button>
+</a>
+
+</section>
+
+<!-- Workshop2 -->
+<div class="energy-counter">
+残エネルギー: <span id="energy">100</span>
+</div>
+
+<section>
+<h2>University Quest</h2>
+
+<label>挑戦したいこと</label>
+<input id="customQuest">
+
+<label>必要エネルギー</label>
+<input type="number" id="customEnergy" oninput="calcEnergy()">
+
+</section>
+
+<!-- 最終まとめ -->
+<section>
+<h2>Final Summary</h2>
+<button onclick="generateSummary()">ワークシートを可視化</button>
+<div id="summary"></div>
+</section>
+
+</div>
+
+<script>
+
+// レーダーチャート
+let chart = new Chart(document.getElementById("radarChart"),{
+type:"radar",
+data:{
+labels:["行動","コミュ","創造","分析","挑戦","継続"],
+datasets:[{
+label:"あなたの能力",
+data:[5,5,5,5,5,5],
+backgroundColor:"rgba(237,28,36,0.3)",
+borderColor:"red"
+}]
+}
+});
+
+function updateChart(){
+chart.data.datasets[0].data=[
+s1.value,s2.value,s3.value,s4.value,s5.value,s6.value
+];
+chart.update();
+}
+
+// プロンプト生成
+function generatePrompt(){
+let text=`あなたの強み「${strength.value}」と課題「${issue.value}」からビジネス案を3つ提案せよ`;
+document.getElementById("promptBox").innerText=text;
+}
+
+// コピー
+function copyPrompt(){
+navigator.clipboard.writeText(promptBox.innerText);
+alert("コピー完了！");
+}
+
+// エネルギー
+function calcEnergy(){
+let used = parseInt(customEnergy.value)||0;
+document.getElementById("energy").innerText=100-used;
+}
+
+// 最終まとめ
+function generateSummary(){
+document.getElementById("summary").innerHTML = `
+<h3>あなたの未来設計</h3>
+<p>没頭: ${habit.value}</p>
+<p>課題: ${issue.value}</p>
+<p>強み: ${strength.value}</p>
+<p>挑戦: ${customQuest.value}</p>
+`;
+}
+
+</script>
+
+</body>
+</html>
