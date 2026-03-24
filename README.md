@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Future Quest | Red Bull × Nexus</title>
 
+<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
@@ -16,66 +17,77 @@
     --rb-silver:#f1f1f1;
 }
 
-body{
-    font-family:Arial;
-    background: linear-gradient(135deg,#000b49,#1a1a1a);
-    color:white;
-    margin:0;
+body {
+    font-family: 'Helvetica Neue', Arial;
+    background-color: var(--rb-silver);
+    margin: 0;
 }
 
-header{
-    text-align:center;
-    padding:20px;
+header {
+    background: var(--rb-navy);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 5px solid var(--rb-red);
 }
 
-.logo-area img{
-    height:60px;
-    margin:10px;
+.container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
 }
 
-.container{
-    max-width:700px;
-    margin:auto;
-    padding:20px;
+section {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
 }
 
-section{
-    background:white;
-    color:black;
-    padding:20px;
-    border-radius:15px;
-    margin-bottom:20px;
+h2 {
+    color: var(--rb-red);
+    border-left: 5px solid var(--rb-yellow);
+    padding-left: 10px;
 }
 
-h2{
-    color:var(--rb-red);
+label {
+    display: block;
+    margin-top: 10px;
 }
 
-button{
-    background:var(--rb-red);
-    color:white;
-    padding:12px;
-    border:none;
-    border-radius:20px;
-    width:100%;
-    margin-top:10px;
+input, textarea, select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
 }
 
-.energy-counter{
-    background:var(--rb-yellow);
-    color:black;
-    padding:10px;
-    text-align:center;
-    font-weight:bold;
+button {
+    background: var(--rb-red);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 20px;
+    margin-top: 10px;
+    width: 100%;
+    cursor: pointer;
 }
 
-canvas{
-    margin-top:20px;
+button:hover {
+    background: var(--rb-navy);
 }
 
-/* エフェクト */
-.glow{
-    box-shadow:0 0 15px var(--rb-red);
+.energy-counter {
+    background: var(--rb-yellow);
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.prompt-box {
+    background: #eee;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 10px;
 }
 </style>
 </head>
@@ -83,27 +95,20 @@ canvas{
 <body>
 
 <header>
-    <h1>My Future Quest</h1>
-
-    <!-- ロゴ追加 -->
-    <div class="logo-area">
-        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/f/f5/Red_Bull_Basement_logo.png/320px-Red_Bull_Basement_logo.png">
-        <img src="YOUR_NEXUS_LOGO_URL">
-    </div>
-
-    <p>Energy Your Future</p>
+<h1>My Future Quest</h1>
+<p>Red Bull × Nexus Workshop</p>
 </header>
 
 <div class="container">
 
 <!-- Step1 -->
 <section>
-<h2>Step1: Character Creation</h2>
+<h2>Step 1: Character Creation</h2>
 
-<label>没頭すること</label>
-<input id="habit">
+<label>没頭してしまうこと</label>
+<input type="text" id="habit">
 
-<label>ステータス</label>
+<label>ステータス診断</label>
 
 行動力<input type="range" id="s1" min="1" max="10" value="5" oninput="updateChart()">
 コミュ力<input type="range" id="s2" min="1" max="10" value="5" oninput="updateChart()">
@@ -118,102 +123,166 @@ canvas{
 
 <!-- Step2 -->
 <section>
-<h2>Step2: AI Alchemy</h2>
+<h2>Step 2 & 3: AI Alchemy</h2>
 
-<label>課題</label>
-<input id="issue">
+<label>社会課題</label>
+<input type="text" id="issue_detail">
 
 <label>強み</label>
-<input id="strength">
+<input type="text" id="strength">
 
-<button onclick="generatePrompt()">生成</button>
+<button onclick="generatePrompt()">AIプロンプト生成</button>
 
-<div id="promptBox"></div>
+<div id="prompt_result" class="prompt-box" style="display:none;">
+あなたは、世界中のスタートアップに精通した起業家です。
 
-<button onclick="copyPrompt()">コピー</button>
+下の私の強みと社会課題を組み合わせて、ビジネスアイディアを3つ提案してください。
 
-<!-- ChatGPTリンク -->
+“自分の強み”
+<span id="p_str"></span>
+
+“社会課題”
+<span id="p_issue"></span>
+
+提案の条件
+1.タイトル
+面白いキャッチーなタイトルにしてください
+
+2.概要
+誰の悩みをどう解決するかを簡潔に教えて
+
+3.マネタイズ（どこでお金が発生するのか）
+
+4.独自性、差別化
+
+これらの条件も満たすビジネスアイディアを作成してください。
+</div>
+
+<button id="copy_btn" style="display:none;" onclick="copyPrompt()">コピー</button>
+
 <a href="https://chat.openai.com" target="_blank">
-<button>ChatGPTを開く</button>
+<button>ChatGPTで実行する</button>
 </a>
 
 </section>
 
-<!-- Workshop2 -->
-<div class="energy-counter">
-残エネルギー: <span id="energy">100</span>
-</div>
-
+<!-- Step4 -->
 <section>
-<h2>University Quest</h2>
+<h2>Step 4: Evolution</h2>
 
-<label>挑戦したいこと</label>
-<input id="customQuest">
+<label>ターゲット</label>
+<input type="text">
 
-<label>必要エネルギー</label>
-<input type="number" id="customEnergy" oninput="calcEnergy()">
+<label>解決する問題</label>
+<textarea></textarea>
 
 </section>
 
-<!-- 最終まとめ -->
+<!-- Energy -->
+<div class="energy-counter">
+残りエネルギー: <span id="energy_left">100</span> pt
+</div>
+
+<!-- Workshop2 -->
+<section>
+<h2>University Quest</h2>
+
+<div>
+<input type="checkbox" class="quest" data-pt="80" onchange="calcEnergy()"> ビジコン (80)
+</div>
+<div>
+<input type="checkbox" class="quest" data-pt="70" onchange="calcEnergy()"> 海外 (70)
+</div>
+<div>
+<input type="checkbox" class="quest" data-pt="30" onchange="calcEnergy()"> サークル (30)
+</div>
+
+<h3>自分でクエスト作成</h3>
+
+<label>挑戦したいこと</label>
+<input type="text" id="custom_quest">
+
+<label>エネルギー</label>
+<input type="number" id="custom_pt" value="0" oninput="calcEnergy()">
+
+</section>
+
+<!-- Summary -->
 <section>
 <h2>Final Summary</h2>
-<button onclick="generateSummary()">ワークシートを可視化</button>
+
+<button onclick="generateSummary()">ワークを可視化</button>
+
 <div id="summary"></div>
+
 </section>
 
 </div>
 
 <script>
 
-// レーダーチャート
-let chart = new Chart(document.getElementById("radarChart"),{
-type:"radar",
-data:{
-labels:["行動","コミュ","創造","分析","挑戦","継続"],
-datasets:[{
-label:"あなたの能力",
-data:[5,5,5,5,5,5],
-backgroundColor:"rgba(237,28,36,0.3)",
-borderColor:"red"
-}]
+// Chart
+let chart;
+
+function initChart(){
+    chart = new Chart(document.getElementById('radarChart'), {
+        type: 'radar',
+        data: {
+            labels: ['行動','コミュ','創造','分析','挑戦','継続'],
+            datasets: [{
+                data: [5,5,5,5,5,5],
+                backgroundColor:'rgba(237,28,36,0.2)',
+                borderColor:'#ed1c24'
+            }]
+        }
+    });
 }
-});
 
 function updateChart(){
-chart.data.datasets[0].data=[
-s1.value,s2.value,s3.value,s4.value,s5.value,s6.value
-];
-chart.update();
+    chart.data.datasets[0].data = [
+        s1.value, s2.value, s3.value, s4.value, s5.value, s6.value
+    ];
+    chart.update();
 }
 
-// プロンプト生成
+window.onload = initChart;
+
+// Prompt
 function generatePrompt(){
-let text=`あなたの強み「${strength.value}」と課題「${issue.value}」からビジネス案を3つ提案せよ`;
-document.getElementById("promptBox").innerText=text;
+    p_str.innerText = strength.value;
+    p_issue.innerText = issue_detail.value;
+    prompt_result.style.display = "block";
+    copy_btn.style.display = "block";
 }
 
-// コピー
+// Copy
 function copyPrompt(){
-navigator.clipboard.writeText(promptBox.innerText);
-alert("コピー完了！");
+    navigator.clipboard.writeText(prompt_result.innerText);
+    alert("コピーしました！");
 }
 
-// エネルギー
+// Energy
 function calcEnergy(){
-let used = parseInt(customEnergy.value)||0;
-document.getElementById("energy").innerText=100-used;
+    let total = 0;
+
+    document.querySelectorAll('.quest:checked').forEach(el=>{
+        total += parseInt(el.dataset.pt);
+    });
+
+    total += parseInt(custom_pt.value) || 0;
+
+    energy_left.innerText = 100 - total;
 }
 
-// 最終まとめ
+// Summary
 function generateSummary(){
-document.getElementById("summary").innerHTML = `
-<h3>あなたの未来設計</h3>
-<p>没頭: ${habit.value}</p>
-<p>課題: ${issue.value}</p>
-<p>強み: ${strength.value}</p>
-<p>挑戦: ${customQuest.value}</p>
-`;
+    summary.innerHTML = `
+    <h3>あなたの未来</h3>
+    <p>没頭: ${habit.value}</p>
+    <p>課題: ${issue_detail.value}</p>
+    <p>強み: ${strength.value}</p>
+    <p>挑戦: ${custom_quest.value}</p>
+    `;
 }
 
 </script>
